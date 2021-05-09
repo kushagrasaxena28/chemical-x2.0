@@ -1,0 +1,123 @@
+<%- include('partials/header', {title:'Chemical X', pageCSS:"/css/fboUser.css"}) %>
+
+<link rel="stylesheet" href="/css/heading.css">
+<h1 class="heading mb-0"><a href="/" class="heading-link">CHEMICAL X</a></h1>
+
+<ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+    <li class="nav-item ">
+      <a class="nav-link active" data-toggle="tab" href="#details" role="tab" aria-controls="home" aria-selected="true"><%= pickupPerson.firstName %> <%= pickupPerson.lastName %></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#todaysPickups" role="tab" aria-controls="profile" aria-selected="true">Today's Pickups</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link"  data-toggle="tab" href="#optimalRoute" role="tab" aria-controls="profile" aria-selected="false">Optimal Route</a>
+    </li>
+    <li class="nav-item">
+      <a href="/logout">
+        <a class="nav-link" href="/admin" role="link" aria-controls="contact" aria-selected="false">Logout</a>
+      </a>
+    </li>
+</ul>
+
+
+<div class="formWrapper">
+  <div class="tab-content" id="myTabContent">
+
+    <div class="tab-pane fade show active" id = "details" role="tabpanel">
+
+    </div>
+
+    <div class="tab-pane fade " id="todaysPickups" role="tabpanel">
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Pickup Address</th>
+                <th scope="col">Oil Quantity</th>
+                <th scope="col">Amount to be paid</th>
+                <th scope="col">Mobile Number</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+                <% for(let i=0;i<pickupPerson.requests.length;i++){ %>
+                  <tr>
+                  <td> <%= pickupPerson.requests[i].pickUpAddr %>  </td>
+                  <td> <%= pickupPerson.requests[i].oilQuantity %>  </td>
+                  <td> <%= pickupPerson.requests[i].fboOilCost %>  </td>
+                  <td> <%= pickupPerson.requests[i].mobNo %>  </td>
+                 </tr>
+                <% } %>
+              
+           </tbody>
+        </table>
+    </div>
+
+    <div class="tab-pane fade" id="optimalRoute" role="tabpanel">
+      
+    <div id="map-canvas" class="mt-3 px-3"></div>
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDc8PFFlDfuaGG2RZMbw-iGgWKIVX6ldro&libraries=places"></script>
+    </div>
+    
+    <div class="tab-pane fade" id="statusUpdate" role="tabpanel">
+     
+      
+    </div>
+  </div>
+</div>
+
+<script>
+let directionDisplay = new google.maps.DirectionsRenderer();
+let directionsService = new google.maps.DirectionsService();
+
+let map;
+
+let requests = <%- JSON.stringify(pickupPerson.requests); %>
+let factoryLat = <%- JSON.stringify(pickupPerson.assignedFactoryCoordinates.lat); %>
+let factoryLng =  <%- JSON.stringify(pickupPerson.assignedFactoryCoordinates.lng); %>
+
+console.log(requests);
+
+let factory = new google.maps.LatLng(factoryLat,factoryLng);
+let waypts = [];
+requests.forEach(request=>{
+  waypts.push({
+    location:`${request.coordinates.lat},${request.coordinates.lng}`
+  })
+})
+
+let mapOptions = {
+    zoom:14,
+    center: factory
+}
+
+map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+directionDisplay.setMap(map);
+
+calculateRoute = () =>{
+    const request = {
+        origin:factory,
+        destination:factory,
+        travelMode:"DRIVING",
+        waypoints: waypts,
+        optimizeWaypoints:true
+    }
+
+    directionsService.route(request,(result,status)=>{
+      console.log(result);
+        if(status=='OK'){
+            directionDisplay.setDirections(result);
+        }
+    })
+    
+}
+
+$('a[href="#optimalRoute"]').on('shown.bs.tab', function (e) {
+    calculateRoute();
+})
+
+</script>
+<%- include('partials/footer',{pageJS:""})%>
+

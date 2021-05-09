@@ -1,0 +1,54 @@
+body{
+    padding-bottom:5%;
+}
+
+#map-canvas{
+    width:100%;
+    height:500px;
+}
+.nav-tabs{
+    background: #220a37;
+}
+
+.nav-link{
+    color: #ffffff;
+}
+
+.driverFormWrapper{
+    padding-left: 10rem;
+    padding-right: 10rem;
+}
+.formWrapper{
+    text-align: center;
+}
+
+.requestForm{
+    width:100%;
+}
+
+.pendingRequests{
+    text-align: center;
+    width:100%;
+}
+
+
+.img-accept{
+    background:url("/images/checked-green.png") no-repeat; 
+    width:20px;
+    border:none;
+}
+
+.img-reject{
+    background:url("/images/close.png") no-repeat; 
+    width:20px;
+    border:none;
+}
+
+footer{
+    position: fixed;
+    left:0;
+    bottom:0;
+    width: 100%;
+    text-align: center;
+    background: lightgray;
+}
